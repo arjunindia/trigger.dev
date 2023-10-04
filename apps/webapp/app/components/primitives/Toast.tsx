@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { AnimatePresence, motion } from "framer-motion";
-import toast, { Toaster, resolveValue, useToasterStore } from "react-hot-toast";
+import { Toaster, toast } from "sonner";
+
 import { useTypedLoaderData } from "remix-typedjson";
 import { loader } from "~/root";
 import { useEffect } from "react";
@@ -11,7 +11,6 @@ const permanentToastDuration = 60 * 60 * 24 * 1000;
 
 export function Toast() {
   const { toastMessage } = useTypedLoaderData<typeof loader>();
-
   useEffect(() => {
     if (!toastMessage) {
       return;
@@ -20,12 +19,12 @@ export function Toast() {
 
     switch (type) {
       case "success":
-        toast.success(message, {
+        toast.custom((t) => <ToastUI variant="success" message={message} t={t as string} />, {
           duration: options.ephemeral ? defaultToastDuration : permanentToastDuration,
         });
         break;
       case "error":
-        toast.error(message, {
+        toast.custom((t) => <ToastUI variant="error" message={message} t={t as string} />, {
           duration: options.ephemeral ? defaultToastDuration : permanentToastDuration,
         });
         break;
@@ -34,56 +33,35 @@ export function Toast() {
     }
   }, [toastMessage]);
 
+  return <Toaster />;
+}
+
+export function ToastUI({
+  variant,
+  message,
+  t,
+}: {
+  variant: "error" | "success";
+  message: string;
+  t: string;
+}) {
   return (
-    <Toaster
-      position="bottom-right"
-      toastOptions={{
-        success: {
-          icon: <CheckCircleIcon className="h-6 w-6 text-green-600" />,
-        },
-        error: {
-          icon: <ExclamationCircleIcon className="h-6 w-6 text-rose-600" />,
-        },
+    <div
+      className="flex gap-2 rounded-lg border border-slate-750 bg-no-repeat p-4 text-bright shadow-md"
+      style={{
+        background:
+          "radial-gradient(at top, hsla(271, 91%, 65%, 0.18), hsla(221, 83%, 53%, 0.18)) hsla(221, 83%, 53%, 0.18)",
       }}
     >
-      {(t) => (
-        <AnimatePresence>
-          <motion.div
-            className="flex gap-2 rounded-lg border border-slate-750 bg-no-repeat p-4 text-bright shadow-md"
-            style={{
-              opacity: t.visible ? 1 : 0,
-              background:
-                "radial-gradient(at top, hsla(271, 91%, 65%, 0.18), hsla(221, 83%, 53%, 0.18)) hsla(221, 83%, 53%, 0.18)",
-            }}
-            initial={{ opacity: 0, y: 100 }}
-            animate={t.visible ? "visible" : "hidden"}
-            variants={{
-              hidden: {
-                opacity: 0,
-                y: 0,
-                transition: {
-                  duration: 0.15,
-                  ease: "easeInOut",
-                },
-              },
-              visible: {
-                opacity: 1,
-                y: 0,
-                transition: {
-                  duration: 0.3,
-                  ease: "easeInOut",
-                },
-              },
-            }}
-          >
-            {t.icon}
-            {resolveValue(t.message, t)}
-            <button className="p-1" onClick={() => toast.dismiss(t.id)}>
-              <XMarkIcon className="h-4 w-4 text-bright" />
-            </button>
-          </motion.div>
-        </AnimatePresence>
+      {variant === "success" ? (
+        <CheckCircleIcon className="h-6 w-6 text-green-600" />
+      ) : (
+        <ExclamationCircleIcon className="h-6 w-6 text-rose-600" />
       )}
-    </Toaster>
+      {message}
+      <button className="p-1" onClick={() => toast.dismiss(t)}>
+        <XMarkIcon className="h-4 w-4 text-bright" />
+      </button>
+    </div>
   );
 }
