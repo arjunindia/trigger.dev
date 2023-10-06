@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Toaster, toast } from "sonner";
 import { ToastUI } from "../primitives/Toast";
-import { ExclamationCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { Button } from "../primitives/Buttons";
 
 const meta: Meta = {
@@ -27,7 +25,7 @@ function Collection() {
         variant="primary/large"
         onClick={() =>
           toast.custom((t) => <ToastUI variant="success" message="Success" t={t as string} />, {
-            duration: 5000,
+            duration: Infinity, // Prevents auto-dismissal for demo purposes
           })
         }
       >
@@ -37,7 +35,7 @@ function Collection() {
         variant="primary/large"
         onClick={() =>
           toast.custom((t) => <ToastUI variant="error" message="Error" t={t as string} />, {
-            duration: 5000,
+            duration: Infinity,
           })
         }
       >

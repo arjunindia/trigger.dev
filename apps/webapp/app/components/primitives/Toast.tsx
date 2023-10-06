@@ -22,22 +22,29 @@ export function Toast() {
     });
   }, [toastMessage]);
 
-  return <Toaster />;
+  return <Toaster className="" />;
 }
 
 export function ToastUI({
   variant,
   message,
   t,
+  toastWidth = 356, // Default width, matches what sonner provides by default
 }: {
   variant: "error" | "success";
   message: string;
   t: string;
+  toastWidth?: string | number;
 }) {
   return (
-    <div className="rounded-lg border border-slate-750 bg-midnight-900 shadow-md">
+    <div
+      className={`self-end rounded-lg border border-slate-750 bg-midnight-900 shadow-md`}
+      style={{
+        width: toastWidth,
+      }}
+    >
       <div
-        className="flex gap-2 rounded-lg bg-no-repeat p-4 text-bright"
+        className="flex w-full gap-2 rounded-lg bg-no-repeat p-4 text-bright"
         style={{
           background:
             "radial-gradient(at top, hsla(271, 91%, 65%, 0.18), hsla(221, 83%, 53%, 0.18)) hsla(221, 83%, 53%, 0.18)",
@@ -49,7 +56,7 @@ export function ToastUI({
           <ExclamationCircleIcon className="h-6 w-6 text-rose-600" />
         )}
         {message}
-        <button className="p-1" onClick={() => toast.dismiss(t)}>
+        <button className="ms-auto p-1" onClick={() => toast.dismiss(t)}>
           <XMarkIcon className="h-4 w-4 text-bright" />
         </button>
       </div>
